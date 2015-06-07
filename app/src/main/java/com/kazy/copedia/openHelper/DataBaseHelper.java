@@ -32,9 +32,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         databasePath = this.context.getDatabasePath(DB_NAME);
     }
 
-    /**
-     * asset に格納したデータベースをコピーするための空のデータベースを作成する
-     */
     private boolean doesDatabaseExist() {
         File dbFile = context.getDatabasePath(DB_NAME);
         if (!dbFile.exists()) {
@@ -51,18 +48,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     public void createEmptyDataBase() throws IOException {
-        if (doesDatabaseExist()) {
-        }
-        if (doesDatabaseExist()) {
-            // すでにデータベースは作成されている
-        } else {
-            // このメソッドを呼ぶことで、空のデータベースがアプリのデフォルトシステムパスに作られる
+        if (!doesDatabaseExist()) {
             getReadableDatabase();
-
             try {
-                // asset に格納したデータベースをコピーする
                 copyDataBaseFromAsset();
-
                 String dbPath = databasePath.getAbsolutePath();
                 SQLiteDatabase checkDb = null;
                 try {
@@ -70,7 +59,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 } catch (SQLiteException e) {
                     e.toString();
                 }
-
                 if (checkDb != null) {
                     checkDb.setVersion(DATABASE_VERSION);
                     checkDb.close();
@@ -82,24 +70,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * asset に格納したデーだベースをデフォルトのデータベースパスに作成したからのデータベースにコピーする
-     */
     private void copyDataBaseFromAsset() throws IOException {
-        // asset 内のデータベースファイルにアクセス
         InputStream mInput = context.getAssets().open(DB_NAME_ASSET);
-
-        // デフォルトのデータベースパスに作成した空のDB
         OutputStream mOutput = new FileOutputStream(databasePath);
-
-        // コピー
         byte[] buffer = new byte[1024];
         int size;
         while ((size = mInput.read(buffer)) > 0) {
             mOutput.write(buffer, 0, size);
         }
-
-        // Close the streams
         mOutput.flush();
         mOutput.close();
         mInput.close();

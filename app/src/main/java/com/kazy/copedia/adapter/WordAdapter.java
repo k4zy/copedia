@@ -49,6 +49,14 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public boolean contains(Word word){
+        return words.contains(word);
+    }
+
+    public void remove(Word word){
+        words.remove(word);
+    }
+
     @Override
     public int getItemCount() {
         return words.size();

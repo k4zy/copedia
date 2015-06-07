@@ -32,4 +32,13 @@ public class Word {
     public int getLevel() {
         return level;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Word) {
+            return this.word.equals(((Word) o).getWord());
+        } else {
+            return false;
+        }
+    }
 }

@@ -78,17 +78,30 @@ public class RootActivity extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
                 String searchWord = editable.toString();
                 wordAdapter.clear();
-                Cursor cursor = db.rawQuery("select * from items where word  like '%" + searchWord + "%' limit 100;", null);
-                while (cursor.moveToNext()) {
-                    int id = cursor.getInt(0);
-                    String word = cursor.getString(1);
-                    String mean = cursor.getString(2);
-                    int level = cursor.getInt(3);
-                    wordAdapter.add(new Word(id, word, mean, level));
-                }
-                cursor.close();
+
+                Cursor rightMatchCursor = db.rawQuery(
+                        "select * from items where word  like '" + searchWord + "%' order by id  limit 100 ", null);
+                addToAdapter(rightMatchCursor);
+                rightMatchCursor.close();
+
+                Cursor leftMatchCursor = db.rawQuery(
+                        "select * from items where word  like '%" + searchWord + "' order by id  limit 100 ", null);
+                addToAdapter(leftMatchCursor);
+                leftMatchCursor.close();
+
             }
         });
+    }
+
+    private void addToAdapter(Cursor cursor) {
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String englishWord = cursor.getString(1);
+            String mean = cursor.getString(2);
+            int level = cursor.getInt(3);
+            Word word = new Word(id, englishWord, mean, level);
+            wordAdapter.add(word);
+        }
     }
 
     @Override
